@@ -78,11 +78,15 @@ Commande de vérification complète : `pnpm check` (à lancer avant chaque commi
 - `lib/storage.ts` (expo-sqlite, natif) / `lib/storage.web.ts` (localStorage, aperçu web) :
   résolution par extension de plateforme Metro. Idem `lib/notifications(.web).ts`.
 - `lib/session.ts` : logique sans React Native, testée par Vitest (`apps/mobile/test`).
+  Le store est testé avec stockage et `expo-crypto` simulés (`test/store.test.ts`).
 - **Jamais bloquer sur l'IA** : `fetchRecapWithFallback` (4 s max) et
   `fetchCoachWithFallback` retombent toujours sur les versions locales.
 - Le gain d'une suggestion du coach est **mesuré** (`verifySuggestions`, 20 combats) avant
   « Appliquer » ; l'IA ne promet aucun chiffre.
-- i18n : `src/i18n/fr.ts` fait foi ; les autres langues sont partielles avec repli fr.
+- i18n : `src/i18n/fr.ts` fait foi ; `en.ts` est typé `Record<MessageKey, string>` (une clé
+  manquante casse le typecheck). Les textes du contenu (`Localized`) ont fr + en (testé).
+  Limite connue : les textes générés localement (récaps par templates, diagnostic du coach
+  hors ligne) sont en français uniquement.
 - Installer une dépendance native : `npx expo install <pkg>` (versions alignées SDK 58).
 
 ## TypeScript
