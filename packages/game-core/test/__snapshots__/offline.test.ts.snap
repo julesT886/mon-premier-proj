@@ -2,7 +2,7 @@
 
 exports[`computeOfflineProgress — reproductibility > matches a frozen golden result for a fixed seed (12 h, fresh warrior) 1`] = `
 {
-  "combats": 4196,
+  "combats": 4323,
   "events": [
     "level_up",
     "skill_unlocked",
@@ -17,11 +17,9 @@ exports[`computeOfflineProgress — reproductibility > matches a frozen golden r
     "boss_failed",
     "level_up",
     "skill_unlocked",
-    "boss_failed",
-    "boss_failed",
-    "rare_item",
     "boss_defeated",
     "region_unlocked",
+    "rare_item",
     "rare_item",
     "level_up",
     "skill_unlocked",
@@ -37,12 +35,12 @@ exports[`computeOfflineProgress — reproductibility > matches a frozen golden r
     "treasure",
     "treasure",
     "treasure",
-    "treasure",
     "level_up",
     "skill_unlocked",
     "treasure",
+    "treasure",
   ],
-  "kills": 4190,
+  "kills": 4319,
   "level": 11,
   "region": {
     "coast": {
@@ -54,9 +52,9 @@ exports[`computeOfflineProgress — reproductibility > matches a frozen golden r
     },
     "forest": {
       "bossDefeated": true,
-      "bossRetryAtChunk": 31,
-      "kills": 4190,
-      "killsSinceBossAttempt": 3326,
+      "bossRetryAtChunk": 19,
+      "kills": 4319,
+      "killsSinceBossAttempt": 3750,
       "unlocked": true,
     },
     "volcano": {
@@ -69,10 +67,10 @@ exports[`computeOfflineProgress — reproductibility > matches a frozen golden r
   },
   "resources": {
     "embershard": 0,
-    "gold": 75669,
-    "moonsap": 8079,
+    "gold": 78144,
+    "moonsap": 8341,
     "nacre": 0,
   },
-  "xp": 29594,
+  "xp": 34797,
 }
 `;

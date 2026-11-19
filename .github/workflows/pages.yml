@@ -1,0 +1,58 @@
+name: Deploy web preview to GitHub Pages
+
+# Publie la version web de l'app (jouable hors ligne, sans IA) à chaque mise à jour de main.
+# Prérequis unique : Settings → Pages → Source : « GitHub Actions ».
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - name: Export web bundle under the repository path
+        working-directory: apps/mobile
+        env:
+          EXPO_BASE_URL: /${{ github.event.repository.name }}
+        run: npx expo export --platform web --output-dir dist
+      - name: Prepare static site
+        working-directory: apps/mobile/dist
+        run: |
+          # Liens directs (/home, /build…) : GitHub Pages sert 404.html, qui charge l'app.
+          cp index.html 404.html
+          # Sans ce fichier, Jekyll ignorerait le dossier _expo/ (bundles JS).
+          touch .nojekyll
+      - name: No secret in the published site
+        run: node scripts/check-no-secrets.mjs apps/mobile/dist
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: apps/mobile/dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

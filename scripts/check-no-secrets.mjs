@@ -3,7 +3,12 @@
 import { readdirSync, readFileSync, statSync } from 'node:fs';
 import { join } from 'node:path';
 
-const roots = ['apps/mobile/src', 'apps/mobile/app.json', ...process.argv.slice(2)];
+const roots = [
+  'apps/mobile/src',
+  'apps/mobile/app.json',
+  'apps/mobile/app.config.ts',
+  ...process.argv.slice(2),
+];
 const forbidden = [
   /sk-ant-[A-Za-z0-9_-]{10,}/,
   /ANTHROPIC_API_KEY/,

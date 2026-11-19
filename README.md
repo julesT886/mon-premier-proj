@@ -64,6 +64,18 @@ Voir [`.env.example`](./.env.example).
 **Règle absolue :** la clé Anthropic ne vit que dans `apps/api`. Tout ce qui commence par
 `EXPO_PUBLIC_` est embarqué dans l'app et donc public.
 
+## Essayer l'app dans le navigateur (GitHub Pages)
+
+Version web publique, jouable hors ligne (coach et récaps en version locale, sans IA) :
+**https://julest886.github.io/mon-premier-proj/**
+
+Le workflow `.github/workflows/pages.yml` la republie à chaque mise à jour de `main`.
+Activation unique : **Settings → Pages → Source : « GitHub Actions »**, puis relancer le
+workflow « Deploy web preview to GitHub Pages » (onglet Actions) ou pousser sur `main`.
+
+En local, la même version sous un sous-chemin :
+`EXPO_BASE_URL=/mon-premier-proj npx expo export --platform web` (dans `apps/mobile`).
+
 ## Déploiement de l'API (Fly.io)
 
 ```bash
