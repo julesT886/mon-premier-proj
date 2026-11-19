@@ -65,7 +65,7 @@ export async function fetchRecapWithFallback(
   locale: Locale,
   timeoutMs = RECAP_CLIENT_TIMEOUT_MS,
 ): Promise<Recap> {
-  const local = () => buildLocalRecap(input);
+  const local = () => buildLocalRecap({ ...input, locale });
   if (!api) return local();
   try {
     const res = await api.recap({ ...input, locale }, timeoutMs);
@@ -119,7 +119,7 @@ export async function fetchCoachWithFallback(
       // repli local ci-dessous
     }
   }
-  const { advice } = localCoach(state, summary, coachTarget(state, log));
+  const { advice } = localCoach(state, summary, coachTarget(state, log), locale);
   return { advice, source: 'local' };
 }
 

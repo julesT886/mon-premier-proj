@@ -188,6 +188,21 @@ describe('POST /ai/recap', () => {
     }
   });
 
+  it('serves the template fallback in the requested language', async () => {
+    const llm = new FakeLlm(() => {
+      throw new Error('down');
+    });
+    const res = await makeApp(llm).inject({
+      method: 'POST',
+      url: '/ai/recap',
+      headers: auth,
+      payload: recapRequest({ locale: 'en', tone: 'cozy' }),
+    });
+    const { recap } = res.json<RecapResponse>();
+    expect(recap.source).toBe('template');
+    expect(recap.story).toMatch(/Whisperwood/);
+  });
+
   it('uses templates once the daily quota is spent (never blocks the game)', async () => {
     const llm = new FakeLlm(() => ok({ story: GOOD_STORY, hook: 'Reviens vite.' }));
     const app = makeApp(llm);

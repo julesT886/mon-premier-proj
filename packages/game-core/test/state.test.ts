@@ -123,26 +123,28 @@ describe('buildLocalRecap', () => {
     },
   ];
 
-  for (const tone of RECAP_TONES) {
-    for (const sc of scenarios) {
-      it(`${tone} / ${sc.name}: ${RECAP_MIN_WORDS}-${RECAP_MAX_WORDS} words + hook`, () => {
-        const recap = buildLocalRecap({
-          heroName: 'Aria',
-          region: 'forest',
-          companions: ['pip'],
-          tone,
-          events: sc.events,
-          kills: sc.kills,
-          elapsedMs: 12 * 3600_000,
+  for (const locale of ['fr', 'en'] as const)
+    for (const tone of RECAP_TONES) {
+      for (const sc of scenarios) {
+        it(`${locale} / ${tone} / ${sc.name}: ${RECAP_MIN_WORDS}-${RECAP_MAX_WORDS} words + hook`, () => {
+          const recap = buildLocalRecap({
+            locale,
+            heroName: 'Aria',
+            region: 'forest',
+            companions: ['pip'],
+            tone,
+            events: sc.events,
+            kills: sc.kills,
+            elapsedMs: 12 * 3600_000,
+          });
+          const words = countWords(recap.story);
+          expect(words).toBeGreaterThanOrEqual(RECAP_MIN_WORDS);
+          expect(words).toBeLessThanOrEqual(RECAP_MAX_WORDS);
+          expect(recap.hook.length).toBeGreaterThan(10);
+          expect(recap.source).toBe('template');
         });
-        const words = countWords(recap.story);
-        expect(words).toBeGreaterThanOrEqual(RECAP_MIN_WORDS);
-        expect(words).toBeLessThanOrEqual(RECAP_MAX_WORDS);
-        expect(recap.hook.length).toBeGreaterThan(10);
-        expect(recap.source).toBe('template');
-      });
+      }
     }
-  }
 
   it('is deterministic and mentions the main beat', () => {
     const input = {
@@ -157,6 +159,25 @@ describe('buildLocalRecap', () => {
     expect(buildLocalRecap(input)).toEqual(buildLocalRecap(input));
     expect(buildLocalRecap(input).story).toContain('La Mère-Ronce');
     expect(buildLocalRecap(input).hook).toContain('Cœur-de-Braise');
+  });
+
+  it('writes the English recap with English content names', () => {
+    const recap = buildLocalRecap({
+      locale: 'en',
+      heroName: 'Aria',
+      region: 'forest',
+      companions: ['pip'],
+      tone: 'epic',
+      kills: 50,
+      elapsedMs: 3 * 3600_000,
+      events: [
+        { ts: 1, type: 'boss_defeated', enemyId: 'bramble_mother', region: 'forest' },
+        { ts: 1, type: 'region_unlocked', region: 'volcano' },
+      ],
+    });
+    expect(recap.story).toContain('The Bramble Mother');
+    expect(recap.story).toContain('3 hours');
+    expect(recap.hook).toContain('Emberheart');
   });
 
   it('skips a boss failure followed by its defeat and groups relics', () => {

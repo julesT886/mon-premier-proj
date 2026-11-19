@@ -92,6 +92,13 @@ describe('summarizeCombatLog', () => {
     expect(summary.deathCauses.every((d) => d.name.length > 0)).toBe(true);
   });
 
+  it('diagnose() speaks English when asked', () => {
+    const en = summarizeCombatLog(log, 'en');
+    const problems = diagnose(en, 'en');
+    const resisted = problems.find((p) => p.type === 'resisted_school');
+    expect(resisted?.detail).toMatch(/resists ice damage by \d+%/);
+  });
+
   it('diagnose() spots the resisted school', () => {
     const problems = diagnose(summary);
     expect(problems.map((p) => p.type)).toContain('resisted_school');
