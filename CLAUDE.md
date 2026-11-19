@@ -30,7 +30,9 @@ Commande de vérification complète : `pnpm check` (à lancer avant chaque commi
    `Math.floor/round/min/max/abs/imul`. Interdits (test `determinism guard`) : `Math.pow`,
    `log`, `exp`, `sqrt`, trigonométrie, `localeCompare`. Courbes non linéaires = tables.
 3. **Données dans `src/content/`** (compétences, synergies, classes, monde, progression).
-   Rééquilibrer = modifier `content/`, jamais le moteur.
+   Rééquilibrer = modifier `content/`, jamais le moteur. Mesurer avant et après avec
+   `pnpm --filter @brumeterre/game-core meta` : builds optimisés par classe et par boss, et
+   fréquence de chaque compétence (une compétence partout = trop forte, jamais = trop faible).
 4. **Snapshots dorés** sur seeds fixes (`test/__snapshots__`). Un changement de règle qui
    les modifie doit être volontaire (`vitest -u`) et mentionné dans le commit.
 
