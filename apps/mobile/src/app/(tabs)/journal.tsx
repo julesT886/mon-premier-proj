@@ -2,14 +2,15 @@ import { useFocusEffect } from 'expo-router';
 import { useCallback, useState } from 'react';
 import { StyleSheet, Text } from 'react-native';
 import { Card, Label, Row, Screen, Title } from '../../components/ui';
-import { useT } from '../../hooks/useT';
-import { formatDuration } from '../../i18n';
+import { useLocale, useT } from '../../hooks/useT';
+import { formatDate, formatDuration, formatNumber } from '../../i18n';
 import { storage } from '../../lib/storage';
 import type { JournalCombat, JournalRecap } from '../../lib/storage.types';
 import { colors, font } from '../../theme';
 
 export default function JournalScreen() {
   const t = useT();
+  const locale = useLocale();
   const [combats, setCombats] = useState<JournalCombat[]>([]);
   const [recaps, setRecaps] = useState<JournalRecap[]>([]);
 
@@ -29,9 +30,10 @@ export default function JournalScreen() {
       {recaps.map((r) => (
         <Card key={r.ts}>
           <Row style={{ justifyContent: 'space-between' }}>
-            <Text style={styles.meta}>{new Date(r.ts).toLocaleString('fr-FR')}</Text>
+            <Text style={styles.meta}>{formatDate(r.ts, locale)}</Text>
             <Text style={styles.meta}>
-              {formatDuration(r.elapsedMs)} · {r.kills} ⚔️ · +{r.gold} or
+              {formatDuration(r.elapsedMs)} · {r.kills} ⚔️ · +{formatNumber(r.gold, locale)}{' '}
+              {t('resource.gold')}
             </Text>
           </Row>
           <Label>{r.recap.story}</Label>
@@ -50,8 +52,8 @@ export default function JournalScreen() {
                 { color: c.summary.outcome === 'win' ? colors.good : colors.bad },
               ]}
             >
-              {c.summary.outcome === 'win' ? '✓' : '✗'} {c.summary.enemy.name} (niv.{' '}
-              {c.summary.enemy.level})
+              {c.summary.outcome === 'win' ? '✓' : '✗'} {c.summary.enemy.name} (
+              {t('journal.level', { level: c.summary.enemy.level })})
             </Text>
             <Text style={styles.meta}>{c.summary.durationS} s</Text>
           </Row>

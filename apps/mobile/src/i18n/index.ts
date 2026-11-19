@@ -27,3 +27,13 @@ export function formatDuration(ms: number): string {
   const m = minutes % 60;
   return m ? `${h} h ${m} min` : `${h} h`;
 }
+
+const INTL: Record<Locale, string> = { fr: 'fr-FR', en: 'en-US' };
+
+export function formatNumber(n: number, locale: Locale): string {
+  return n.toLocaleString(INTL[locale]);
+}
+
+export function formatDate(ts: number, locale: Locale): string {
+  return new Date(ts).toLocaleString(INTL[locale]);
+}

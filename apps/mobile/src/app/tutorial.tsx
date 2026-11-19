@@ -15,7 +15,7 @@ import { Pressable, StyleSheet, Text, View } from 'react-native';
 import Animated, { FadeIn } from 'react-native-reanimated';
 import { CombatView } from '../components/CombatView';
 import { Button, Card, Label, Row, Screen, TagChip, Title } from '../components/ui';
-import { useT } from '../hooks/useT';
+import { useLocale, useT } from '../hooks/useT';
 import { loc } from '../i18n';
 import { useGame } from '../store/game';
 import { colors, font, space } from '../theme';
@@ -30,6 +30,7 @@ const TUTORIAL_ENEMY = { id: 'bramble_ox', level: 4 } as const;
  */
 export default function Tutorial() {
   const t = useT();
+  const locale = useLocale();
   const save = useGame((s) => s.save);
   const setBuild = useGame((s) => s.setBuild);
   const [step, setStep] = useState(1);
@@ -110,8 +111,8 @@ export default function Tutorial() {
               }}
             >
               <Card>
-                <Text style={styles.skillName}>{loc(skill.name, 'fr')}</Text>
-                <Label dim>{loc(skill.description, 'fr')}</Label>
+                <Text style={styles.skillName}>{loc(skill.name, locale)}</Text>
+                <Label dim>{loc(skill.description, locale)}</Label>
                 <Row>
                   {skill.tags.map((tag) => (
                     <TagChip key={tag} tag={tag} />
@@ -177,10 +178,13 @@ function Compare({
   e: BuildEvaluation;
   highlight?: boolean;
 }) {
+  const t = useT();
   return (
     <View style={styles.compare}>
       <Text style={[styles.compareLabel, highlight && { color: colors.accent }]}>{label}</Text>
-      <Text style={styles.compareValue}>{Math.round(e.winRate * 100)} % victoires</Text>
+      <Text style={styles.compareValue}>
+        {t('tutorial.winRate', { n: Math.round(e.winRate * 100) })}
+      </Text>
       <Text style={styles.compareValue}>{(e.avgDurationMs / 1000).toFixed(1)} s</Text>
       <Text style={styles.compareValue}>{Math.round(e.avgDps)} DPS</Text>
     </View>

@@ -11,7 +11,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { ActivityIndicator, StyleSheet, Text, View } from 'react-native';
 import Animated, { FadeIn, FadeInDown } from 'react-native-reanimated';
 import { Button, Card, Label, Row, Screen, Title } from '../components/ui';
-import { useT } from '../hooks/useT';
+import { useLocale, useT } from '../hooks/useT';
 import { loc, type MessageKey } from '../i18n';
 import {
   coachTarget,
@@ -31,7 +31,7 @@ export default function CoachScreen() {
   const { from } = useLocalSearchParams<{ from?: string }>();
   const state = useGameState();
   const lastFight = useGame((s) => s.lastFight);
-  const locale = useGame((s) => s.save?.settings.locale ?? 'fr');
+  const locale = useLocale();
 
   const log: CombatLog = useMemo(
     () => (from === 'loss' && lastFight ? lastFight : referenceCombat(state, Date.now() % 1000)),
@@ -107,6 +107,7 @@ export default function CoachScreen() {
 
 function SuggestionCard({ suggestion, log }: { suggestion: CoachSuggestion; log: CombatLog }) {
   const t = useT();
+  const locale = useLocale();
   const state = useGameState();
   const setBuild = useGame((s) => s.setBuild);
   const [testing, setTesting] = useState(false);
@@ -131,9 +132,9 @@ function SuggestionCard({ suggestion, log }: { suggestion: CoachSuggestion; log:
     <Card>
       <Text style={styles.swap}>
         {t('build.slot', { n: suggestion.changeSlot + 1 })} :{' '}
-        {fromSkill ? loc(fromSkill.name, 'fr') : t('build.empty')} →{' '}
+        {fromSkill ? loc(fromSkill.name, locale) : t('build.empty')} →{' '}
         <Text style={{ color: colors.accent }}>
-          {toSkill ? loc(toSkill.name, 'fr') : suggestion.to}
+          {toSkill ? loc(toSkill.name, locale) : suggestion.to}
         </Text>
       </Text>
       {suggestion.expectedImpact ? <Label dim>{suggestion.expectedImpact}</Label> : null}

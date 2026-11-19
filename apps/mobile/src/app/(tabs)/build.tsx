@@ -17,13 +17,14 @@ import { router } from 'expo-router';
 import { useMemo, useState } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { Button, Card, Label, Row, Screen, TagChip, Title } from '../../components/ui';
-import { useT } from '../../hooks/useT';
-import { loc } from '../../i18n';
+import { useLocale, useT } from '../../hooks/useT';
+import { formatNumber, loc } from '../../i18n';
 import { useGame, useGameState } from '../../store/game';
 import { colors, font, radius, space, tagColors } from '../../theme';
 
 export default function BuildScreen() {
   const t = useT();
+  const locale = useLocale();
   const state = useGameState();
   const setBuild = useGame((s) => s.setBuild);
   const upgrade = useGame((s) => s.upgrade);
@@ -60,7 +61,7 @@ export default function BuildScreen() {
               <Text style={styles.slotIndex}>{i + 1}</Text>
               <View style={{ flex: 1, gap: 2 }}>
                 <Text style={styles.slotName}>
-                  {skill ? loc(skill.name, 'fr') : t('build.empty')}
+                  {skill ? loc(skill.name, locale) : t('build.empty')}
                 </Text>
                 {skill ? (
                   <Row>
@@ -119,7 +120,7 @@ export default function BuildScreen() {
                       { color: s.active ? colors.accentText : colors.textDim },
                     ]}
                   >
-                    {def ? loc(def.name, 'fr') : s.id}
+                    {def ? loc(def.name, locale) : s.id}
                     {s.active ? '' : ` · ${t('build.synergy.missing', { n: s.missing })}`}
                   </Text>
                 </View>
@@ -132,7 +133,7 @@ export default function BuildScreen() {
             const def = SYNERGIES.find((d) => d.id === s.id);
             return def ? (
               <Label key={s.id} dim style={{ fontSize: 13 }}>
-                ✓ {loc(def.description, 'fr')}
+                ✓ {loc(def.description, locale)}
               </Label>
             ) : null;
           })}
@@ -179,7 +180,7 @@ export default function BuildScreen() {
             >
               <Row style={{ justifyContent: 'space-between' }}>
                 <Text style={styles.skillName}>
-                  {skill.classId === 'warrior' ? '🛡️' : '🔥'} {loc(skill.name, 'fr')}
+                  {skill.classId === 'warrior' ? '🛡️' : '🔥'} {loc(skill.name, locale)}
                 </Text>
                 <Text style={styles.cd}>
                   {available
@@ -188,7 +189,7 @@ export default function BuildScreen() {
                 </Text>
               </Row>
               <Label dim style={{ fontSize: 13 }}>
-                {loc(skill.description, 'fr')}
+                {loc(skill.description, locale)}
               </Label>
               <Row>
                 {skill.tags.map((tag) => (
@@ -198,7 +199,7 @@ export default function BuildScreen() {
               {available && inBuild && rank < MAX_SKILL_RANK ? (
                 <Button
                   kind="secondary"
-                  label={t('build.upgrade', { cost: cost.toLocaleString('fr-FR') })}
+                  label={t('build.upgrade', { cost: formatNumber(cost, locale) })}
                   disabled={state.resources.gold < cost}
                   onPress={() => upgrade(skill.id)}
                 />

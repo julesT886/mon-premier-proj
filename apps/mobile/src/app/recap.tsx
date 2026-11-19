@@ -4,8 +4,8 @@ import { useEffect, useState } from 'react';
 import { ActivityIndicator, StyleSheet, Text, View } from 'react-native';
 import Animated, { FadeIn, FadeInDown } from 'react-native-reanimated';
 import { Button, Card, Label, Row, Screen, Title } from '../components/ui';
-import { useT } from '../hooks/useT';
-import { formatDuration, type MessageKey } from '../i18n';
+import { useLocale, useT } from '../hooks/useT';
+import { formatDuration, formatNumber, type MessageKey } from '../i18n';
 import { fetchRecapWithFallback, recapInputFrom } from '../lib/session';
 import { getApi, useGame } from '../store/game';
 import { colors, font, space } from '../theme';
@@ -13,6 +13,7 @@ import { colors, font, space } from '../theme';
 /** Retour du joueur : récompenses chiffrées d'abord, puis le récit en fondu. */
 export default function RecapScreen() {
   const t = useT();
+  const locale = useLocale();
   const pending = useGame((s) => s.pending);
   const save = useGame((s) => s.save);
   const collect = useGame((s) => s.collect);
@@ -54,9 +55,9 @@ export default function RecapScreen() {
         <Card>
           <Label dim>{t('recap.rewards')}</Label>
           <Row>
-            <Reward value={`+${rewards.xp.toLocaleString('fr-FR')}`} label={t('resource.xp')} />
+            <Reward value={`+${formatNumber(rewards.xp, locale)}`} label={t('resource.xp')} />
             <Reward
-              value={`+${rewards.resources.gold.toLocaleString('fr-FR')}`}
+              value={`+${formatNumber(rewards.resources.gold, locale)}`}
               label={t('resource.gold')}
             />
             {materials.map((m) => (

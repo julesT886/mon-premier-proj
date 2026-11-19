@@ -3,6 +3,7 @@ import {
   REGIONS_BY_ID,
   xpToNext,
   type CombatLog,
+  type Locale,
   type OfflineEvent,
   type ResourceId,
 } from '@brumeterre/game-core';
@@ -12,8 +13,8 @@ import { StyleSheet, Text, View } from 'react-native';
 import Animated, { FadeInDown, FadeOut } from 'react-native-reanimated';
 import { CombatView } from '../../components/CombatView';
 import { Bar, Button, Card, Label, Row, Screen } from '../../components/ui';
-import { useT } from '../../hooks/useT';
-import { formatDuration, loc, type MessageKey } from '../../i18n';
+import { useLocale, useT } from '../../hooks/useT';
+import { formatDuration, formatNumber, loc, type MessageKey } from '../../i18n';
 import { showcaseCombat } from '../../lib/session';
 import { useGame, useGameState } from '../../store/game';
 import { colors, font, regionColors, space } from '../../theme';
@@ -22,6 +23,7 @@ const RESOURCES: ResourceId[] = ['gold', 'moonsap', 'embershard', 'nacre'];
 
 export default function Home() {
   const t = useT();
+  const locale = useLocale();
   const state = useGameState();
   const pending = useGame((s) => s.pending);
   const lastFight = useGame((s) => s.lastFight);
@@ -67,12 +69,12 @@ export default function Home() {
           <Text style={styles.hero}>{state.hero.name}</Text>
           <Label dim>
             {t('common.level', { level: state.hero.level })} ·{' '}
-            {loc(CLASSES[state.hero.classId].name, 'fr')}
+            {loc(CLASSES[state.hero.classId].name, locale)}
           </Label>
         </View>
         <View style={[styles.regionBadge, { borderColor: regionColors[region.id] }]}>
           <Text style={[styles.regionText, { color: regionColors[region.id] }]}>
-            {loc(region.name, 'fr')}
+            {loc(region.name, locale)}
           </Text>
         </View>
       </Row>
@@ -85,7 +87,7 @@ export default function Home() {
       <Row>
         {RESOURCES.filter((r) => r === 'gold' || state.resources[r] > 0).map((r) => (
           <View key={r} style={styles.resource}>
-            <Text style={styles.resourceValue}>{state.resources[r].toLocaleString('fr-FR')}</Text>
+            <Text style={styles.resourceValue}>{formatNumber(state.resources[r], locale)}</Text>
             <Text style={styles.resourceLabel}>{t(`resource.${r}` as MessageKey)}</Text>
           </View>
         ))}
@@ -123,7 +125,7 @@ export default function Home() {
               exiting={FadeOut}
               style={styles.event}
             >
-              {eventLabel(e)}
+              {eventLabel(e, t, locale)}
             </Animated.Text>
           ))}
         </Card>
@@ -132,26 +134,17 @@ export default function Home() {
   );
 }
 
-function eventLabel(e: OfflineEvent): string {
+function eventLabel(e: OfflineEvent, t: ReturnType<typeof useT>, locale: Locale): string {
   switch (e.type) {
     case 'level_up':
-      return `⬆️ Niveau ${e.level} atteint`;
-    case 'boss_defeated':
-      return '👑 Boss vaincu !';
-    case 'boss_failed':
-      return '💀 Le boss a résisté. Le coach peut t’aider.';
+      return t('event.level_up', { level: e.level });
     case 'region_unlocked':
-      return `🗺️ ${loc(REGIONS_BY_ID[e.region].name, 'fr')} débloquée`;
-    case 'rare_item':
-      return '💎 Relique trouvée';
-    case 'skill_unlocked':
-      return '📜 Nouvelle compétence disponible';
-    case 'dual_class_unlocked':
-      return '✨ Seconde classe éveillée';
+      return t('event.region_unlocked', { region: loc(REGIONS_BY_ID[e.region].name, locale) });
     case 'merchant':
-      return `🛒 Un marchand : +${e.gold} or`;
     case 'treasure':
-      return `🪙 Trésor : +${e.gold} or`;
+      return t(`event.${e.type}`, { gold: formatNumber(e.gold, locale) });
+    default:
+      return t(`event.${e.type}`);
   }
 }
 

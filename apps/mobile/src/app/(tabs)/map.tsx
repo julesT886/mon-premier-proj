@@ -1,7 +1,7 @@
 import { ENEMIES_BY_ID, REGIONS, REGIONS_BY_ID } from '@brumeterre/game-core';
 import { StyleSheet, Text, View } from 'react-native';
 import { Bar, Button, Card, Label, Row, Screen, Title } from '../../components/ui';
-import { useT } from '../../hooks/useT';
+import { useLocale, useT } from '../../hooks/useT';
 import { loc } from '../../i18n';
 import { useGame, useGameState } from '../../store/game';
 import { colors, font, regionColors } from '../../theme';
@@ -10,6 +10,7 @@ const GLYPH = { forest: '🌲', volcano: '🌋', coast: '🌊' } as const;
 
 export default function MapScreen() {
   const t = useT();
+  const locale = useLocale();
   const state = useGameState();
   const travel = useGame((s) => s.travel);
 
@@ -33,19 +34,19 @@ export default function MapScreen() {
           >
             <Row style={{ justifyContent: 'space-between' }}>
               <Text style={styles.name}>
-                {GLYPH[region.id]} {loc(region.name, 'fr')}
+                {GLYPH[region.id]} {loc(region.name, locale)}
               </Text>
               <Text style={styles.levels}>
                 {t('map.levels', { min: region.minLevel, max: region.bossLevel })}
               </Text>
             </Row>
             <Label dim style={{ fontSize: 13 }}>
-              {loc(region.mood, 'fr')}
+              {loc(region.mood, locale)}
             </Label>
             {progress.unlocked ? (
               <View style={{ gap: 6 }}>
                 <Label style={{ fontSize: 13 }}>
-                  {t('map.boss', { name: boss ? loc(boss.name, 'fr') : region.boss })}{' '}
+                  {t('map.boss', { name: boss ? loc(boss.name, locale) : region.boss })}{' '}
                   {progress.bossDefeated ? '✓' : ''}
                 </Label>
                 <Bar value={ratio} color={regionColors[region.id]} height={6} />
@@ -64,7 +65,9 @@ export default function MapScreen() {
               <Label dim>
                 🔒{' '}
                 {t('map.locked', {
-                  region: region.unlockedBy ? loc(REGIONS_BY_ID[region.unlockedBy].name, 'fr') : '',
+                  region: region.unlockedBy
+                    ? loc(REGIONS_BY_ID[region.unlockedBy].name, locale)
+                    : '',
                 })}
               </Label>
             )}

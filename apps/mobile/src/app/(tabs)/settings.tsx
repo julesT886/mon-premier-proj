@@ -10,7 +10,7 @@ import { colors, font, space } from '../../theme';
 
 const LOCALES: { id: Locale; label: string }[] = [
   { id: 'fr', label: 'Français' },
-  { id: 'en', label: 'English (beta)' },
+  { id: 'en', label: 'English' },
 ];
 
 export default function SettingsScreen() {

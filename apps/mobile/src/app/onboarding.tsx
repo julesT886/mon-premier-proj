@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 import Animated, { FadeIn } from 'react-native-reanimated';
 import { Button, Card, Label, Screen, Title } from '../components/ui';
-import { useT } from '../hooks/useT';
+import { useLocale, useT } from '../hooks/useT';
 import { loc } from '../i18n';
 import { useGame } from '../store/game';
 import { colors, font, radius, space } from '../theme';
@@ -18,6 +18,7 @@ const INTRO = [
 /** 3 écrans d'intro, puis choix de classe et de nom (≈ 30 s). */
 export default function Onboarding() {
   const t = useT();
+  const locale = useLocale();
   const createHero = useGame((s) => s.createHero);
   const [step, setStep] = useState(0);
   const [classId, setClassId] = useState<ClassId>('warrior');
@@ -55,7 +56,7 @@ export default function Onboarding() {
         <Pressable key={id} onPress={() => setClassId(id)} testID={`class-${id}`}>
           <Card style={classId === id && { borderColor: colors.accent, borderWidth: 2 }}>
             <Text style={styles.className}>
-              {id === 'warrior' ? '🛡️' : '🔥'} {loc(CLASSES[id].name, 'fr')}
+              {id === 'warrior' ? '🛡️' : '🔥'} {loc(CLASSES[id].name, locale)}
             </Text>
             <Label dim>
               {t(id === 'warrior' ? 'onboarding.class.warrior' : 'onboarding.class.mage')}
