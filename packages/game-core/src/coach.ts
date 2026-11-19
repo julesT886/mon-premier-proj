@@ -160,9 +160,10 @@ export function findBestSwaps(
   screened.sort((a, b) => b.score - a.score || a.slot - b.slot || (a.to < b.to ? -1 : 1));
   const confirmed: VerifiedSuggestion[] = [];
   const usedSlots = new Set<number>();
+  const usedSkills = new Set<SkillId>();
   for (const cand of screened) {
     if (confirmed.length >= max) break;
-    if (usedSlots.has(cand.slot)) continue;
+    if (usedSlots.has(cand.slot) || usedSkills.has(cand.to)) continue;
     const suggestion: CoachSuggestion = {
       changeSlot: cand.slot,
       from: state.build.slots[cand.slot] ?? null,
@@ -174,6 +175,7 @@ export function findBestSwaps(
       verified.suggestion.expectedImpact = formatImpact(verified.comparison);
       confirmed.push(verified);
       usedSlots.add(cand.slot);
+      usedSkills.add(cand.to);
     }
   }
   return confirmed;

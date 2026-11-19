@@ -120,12 +120,13 @@ describe('coach helpers', () => {
     expect(b.slots).toEqual(['a', 'b', 'x', 'd']);
   });
 
-  it('findBestSwaps only returns measured improvements, one per slot', () => {
+  it('findBestSwaps only returns measured improvements, one per slot and per skill', () => {
     const s = iceMageOnCoast();
     const swaps = findBestSwaps(s, { kind: 'boss', region: 'coast' }, { max: 2, runs: 10 });
     expect(swaps.length).toBeGreaterThan(0);
     for (const v of swaps) expect(v.comparison.improved).toBe(true);
     expect(new Set(swaps.map((v) => v.suggestion.changeSlot)).size).toBe(swaps.length);
+    expect(new Set(swaps.map((v) => v.suggestion.to)).size).toBe(swaps.length);
   });
 
   it('localCoach produces a complete advice offline', () => {

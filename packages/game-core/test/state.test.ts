@@ -158,4 +158,23 @@ describe('buildLocalRecap', () => {
     expect(buildLocalRecap(input).story).toContain('La Mère-Ronce');
     expect(buildLocalRecap(input).hook).toContain('Cœur-de-Braise');
   });
+
+  it('skips a boss failure followed by its defeat and groups relics', () => {
+    const story = buildLocalRecap({
+      heroName: 'Aria',
+      region: 'forest',
+      companions: ['pip'],
+      tone: 'epic',
+      kills: 50,
+      elapsedMs: 3600_000,
+      events: [
+        { ts: 1, type: 'boss_failed', enemyId: 'bramble_mother', region: 'forest' },
+        { ts: 2, type: 'boss_defeated', enemyId: 'bramble_mother', region: 'forest' },
+        { ts: 2, type: 'rare_item', relicId: 'lantern_seed' },
+        { ts: 3, type: 'rare_item', relicId: 'mossheart_charm' },
+      ],
+    }).story;
+    expect(story).not.toContain('repoussé');
+    expect(story).toContain('des reliques : Graine-lanterne et Charme cœur-de-mousse');
+  });
 });

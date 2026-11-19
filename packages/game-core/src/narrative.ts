@@ -115,12 +115,8 @@ function eventLine(e: OfflineEvent, tone: RecapTone, c: Ctx): string | null {
       const region = REGIONS_BY_ID[e.region].name.fr;
       return `Au loin, la route vers ${region} s'est ouverte.`;
     }
-    case 'rare_item': {
-      const relic = RELICS_BY_ID[e.relicId]?.name.fr ?? e.relicId;
-      if (funny)
-        return `${c.hero} a trouvé « ${relic} » sous un caillou. Personne ne sait ce qu'il faisait là.`;
-      return `Au détour d'un combat, ${c.hero} a découvert une relique : ${relic}.`;
-    }
+    case 'rare_item':
+      return null; // agrégées à part
     case 'treasure':
       return `Un coffre oublié a livré ${e.gold} pièces d'or.`;
     case 'merchant':
@@ -129,7 +125,7 @@ function eventLine(e: OfflineEvent, tone: RecapTone, c: Ctx): string | null {
       return `Un marchand de passage a échangé quelques trouvailles contre ${e.gold} pièces d'or.`;
     case 'dual_class_unlocked': {
       const cls = CLASSES[e.classId].name.fr;
-      return `Un éveil soudain : ${c.hero} sent désormais en lui le don du ${cls}.`;
+      return `Un éveil soudain : le don du ${cls} s'est révélé à ${c.hero}.`;
     }
     case 'level_up':
     case 'skill_unlocked':
@@ -181,9 +177,16 @@ export function buildLocalRecap(input: RecapInput): Recap {
   const sentences: string[] = [rng.pick(INTRO[input.tone])(c)];
   if (input.kills > 0) sentences.push(KILLS[input.tone](c));
 
-  const sorted = [...input.events].sort(
-    (a, b) => PRIORITY[a.type] - PRIORITY[b.type] || a.ts - b.ts,
+  const defeated = new Set(
+    input.events.flatMap((e) => (e.type === 'boss_defeated' ? [e.enemyId] : [])),
   );
+  const sorted = [...input.events]
+    // Un échec suivi d'une victoire sur le même boss n'est pas raconté.
+    .filter((e) => !(e.type === 'boss_failed' && defeated.has(e.enemyId)))
+    .sort((a, b) => PRIORITY[a.type] - PRIORITY[b.type] || a.ts - b.ts);
+  const relics = [
+    ...new Set(input.events.flatMap((e) => (e.type === 'rare_item' ? [e.relicId] : []))),
+  ].map((id) => RELICS_BY_ID[id]?.name.fr ?? id);
   const seen = new Set<string>();
   for (const e of sorted) {
     const key =
@@ -192,6 +195,18 @@ export function buildLocalRecap(input: RecapInput): Recap {
     seen.add(key);
     const line = eventLine(e, input.tone, c);
     if (line) sentences.push(line);
+  }
+  if (relics.length > 0) {
+    const list =
+      relics.length === 1 ? relics[0] : `${relics.slice(0, -1).join(', ')} et ${relics.at(-1)}`;
+    const what = relics.length > 1 ? 'des reliques' : 'une relique';
+    sentences.splice(
+      Math.min(sentences.length, 4),
+      0,
+      input.tone === 'humorous'
+        ? `${c.hero} a ramassé ${what} (${list}) sous un caillou. Personne ne sait ce que ça faisait là.`
+        : `Au détour d'un combat, ${c.hero} a découvert ${what} : ${list}.`,
+    );
   }
   const levels = input.events.filter((e) => e.type === 'level_up');
   if (levels.length > 0) {
