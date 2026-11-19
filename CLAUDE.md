@@ -85,8 +85,8 @@ Commande de vérification complète : `pnpm check` (à lancer avant chaque commi
   « Appliquer » ; l'IA ne promet aucun chiffre.
 - i18n : `src/i18n/fr.ts` fait foi ; `en.ts` est typé `Record<MessageKey, string>` (une clé
   manquante casse le typecheck). Les textes du contenu (`Localized`) ont fr + en (testé).
-  Limite connue : les textes générés localement (récaps par templates, diagnostic du coach
-  hors ligne) sont en français uniquement.
+  Les textes générés localement sont aussi bilingues : `buildLocalRecap` (paquets `FR`/`EN`
+  typés `RecapTexts`) et le coach local (`COACH_TEXTS`) prennent la langue en paramètre.
 - Installer une dépendance native : `npx expo install <pkg>` (versions alignées SDK 58).
 
 ## TypeScript
