@@ -1,11 +1,12 @@
 /**
  * XP nécessaire pour passer du niveau L au niveau L+1 (index 0 = niveau 1).
- * Table précalculée (≈ 52 h de jeu cumulé pour le niveau 30) : pas de puissance flottante
+ * Table précalculée (premiers niveaux rapides pour l'onboarding, ≈ 3 semaines pour le niveau 30) : pas de puissance flottante
  * dans la simulation, pour un résultat identique sur tous les moteurs JS.
  */
 export const XP_TO_NEXT: readonly number[] = [
-  110, 350, 750, 1310, 2040, 2960, 4070, 5370, 6890, 8620, 10570, 12750, 15150, 17800, 20690, 23820,
-  27200, 30850, 34750, 38910, 43340, 48050, 53030, 58280, 63820, 69650, 75770, 82170, 88880,
+  70, 280, 1130, 3280, 8160, 11840, 16280, 21480, 27560, 34480, 42280, 51000, 60600, 71200, 82760,
+  95280, 108800, 123400, 139000, 155640, 173360, 192200, 212120, 233120, 255280, 278600, 303080,
+  328680, 355520,
 ];
 
 export function xpToNext(level: number): number {
@@ -38,5 +39,5 @@ export function killRewards(enemyLevel: number, isBoss: boolean) {
 
 /** Coût en or pour passer une compétence du rang `currentRank` au suivant. */
 export function skillUpgradeCost(currentRank: number): number {
-  return [0, 150, 600, 2000, 6000][currentRank] ?? Infinity;
+  return [0, 1000, 5000, 20000, 60000][currentRank] ?? Infinity;
 }

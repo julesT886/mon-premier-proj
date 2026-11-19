@@ -370,12 +370,12 @@ export const ENEMIES: readonly EnemyDef[] = [
     name: { fr: 'Thalassène, la Marée sans fond', en: 'Thalassene, the Bottomless Tide' },
     region: 'coast',
     isBoss: true,
-    hpMult: 2.9,
-    attackMult: 0.85,
+    hpMult: 4.2,
+    attackMult: 0.95,
     armorMult: 1.3,
     attackIntervalMs: 2200,
     school: 'ice',
-    resistPct: { ice: 0.55, fire: -0.15 },
+    resistPct: { ice: 0.55, fire: 0.1 },
     abilities: [
       { kind: 'strike', name: { fr: 'Raz-de-marée' }, school: 'ice', coef: 2.3, cooldownMs: 13000 },
       {
