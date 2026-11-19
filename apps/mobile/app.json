@@ -1,0 +1,31 @@
+{
+  "expo": {
+    "name": "Brumeterre",
+    "slug": "brumeterre",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "dark",
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.brumeterre.app"
+    },
+    "android": {
+      "adaptiveIcon": {
+        "backgroundColor": "#14161F",
+        "foregroundImage": "./assets/android-icon-foreground.png",
+        "backgroundImage": "./assets/android-icon-background.png",
+        "monochromeImage": "./assets/android-icon-monochrome.png"
+      },
+      "predictiveBackGestureEnabled": false,
+      "package": "com.brumeterre.app"
+    },
+    "web": {
+      "favicon": "./assets/favicon.png",
+      "output": "single"
+    },
+    "plugins": ["expo-router", "expo-sqlite", "expo-notifications"],
+    "scheme": "brumeterre",
+    "backgroundColor": "#14161F"
+  }
+}
