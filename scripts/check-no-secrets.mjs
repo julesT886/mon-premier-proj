@@ -7,6 +7,7 @@ const roots = [
   'apps/mobile/src',
   'apps/mobile/app.json',
   'apps/mobile/app.config.ts',
+  'apps/mobile/public',
   ...process.argv.slice(2),
 ];
 const forbidden = [

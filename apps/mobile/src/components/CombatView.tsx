@@ -8,7 +8,6 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import Animated, {
   FadeInDown,
-  FadeOutUp,
   useAnimatedStyle,
   useSharedValue,
   withTiming,
@@ -24,6 +23,9 @@ interface Props {
   speed?: number;
   onEnd?: () => void;
 }
+
+/** Chiffres de dégâts affichés en même temps par camp (au-delà, ils déborderaient). */
+const MAX_FLOATERS_PER_SIDE = 2;
 
 interface Floater {
   id: number;
@@ -124,19 +126,26 @@ export function CombatView({ log, heroName, speed = 1.5, onEnd }: Props) {
             {lastCast}
           </Animated.Text>
         ) : null}
-        <View style={styles.floaters}>
-          {floaters.map((f) => (
-            <Animated.Text
-              key={f.id}
-              entering={FadeInDown.duration(150)}
-              exiting={FadeOutUp.duration(400)}
-              style={[
-                styles.floater,
-                { color: f.color, alignSelf: f.side === 'hero' ? 'flex-start' : 'flex-end' },
-              ]}
+        {/* Deux colonnes bornées : dégâts reçus à gauche, infligés à droite (2 max chacune). */}
+        <View style={styles.floaters} pointerEvents="none">
+          {(['hero', 'enemy'] as const).map((side) => (
+            <View
+              key={side}
+              style={[styles.column, { alignItems: side === 'hero' ? 'flex-start' : 'flex-end' }]}
             >
-              {f.text}
-            </Animated.Text>
+              {floaters
+                .filter((f) => f.side === side)
+                .slice(-MAX_FLOATERS_PER_SIDE)
+                .map((f) => (
+                  <Animated.Text
+                    key={f.id}
+                    entering={FadeInDown.duration(150)}
+                    style={[styles.floater, { color: f.color }]}
+                  >
+                    {f.text}
+                  </Animated.Text>
+                ))}
+            </View>
           ))}
         </View>
       </View>
@@ -196,7 +205,7 @@ const styles = StyleSheet.create({
   hp: { color: colors.textDim, fontSize: font.sm, fontVariant: ['tabular-nums'] },
   track: { height: 12, borderRadius: 999, backgroundColor: colors.surfaceAlt, overflow: 'hidden' },
   fill: { height: 12 },
-  middle: { height: 64, justifyContent: 'center' },
+  middle: { height: 64, justifyContent: 'center', overflow: 'hidden' },
   cast: { color: colors.textDim, fontSize: font.sm, textAlign: 'center', fontStyle: 'italic' },
   floaters: {
     position: 'absolute',
@@ -204,7 +213,9 @@ const styles = StyleSheet.create({
     right: 0,
     top: 0,
     bottom: 0,
-    justifyContent: 'center',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
   },
-  floater: { fontSize: font.lg, fontWeight: '800', paddingHorizontal: space.lg },
+  column: { justifyContent: 'center', minWidth: 64 },
+  floater: { fontSize: font.md, fontWeight: '800', lineHeight: 22 },
 });
