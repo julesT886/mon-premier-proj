@@ -22,6 +22,8 @@ export interface BuildEvaluation {
   avgDps: number;
   /** PV restants moyens en fin de combat, en fraction des PV max (0 si défaite). */
   avgHpLeftPct: number;
+  /** PV restants moyens de l'ennemi en fin de combat (fraction). Mesure du progrès quand on perd. */
+  avgEnemyHpLeftPct: number;
 }
 
 function targetFor(target: EvalTarget, heroLevel: number, i: number) {
@@ -55,6 +57,7 @@ export function evaluateBuild(
   let duration = 0;
   let dps = 0;
   let hpLeft = 0;
+  let enemyHpLeft = 0;
   for (let i = 0; i < runs; i++) {
     const enemy = targetFor(target, state.hero.level, i);
     const log = simulateCombat(hero, enemy, deriveSeed('eval', i), { recordEvents: false });
@@ -62,6 +65,7 @@ export function evaluateBuild(
     duration += log.durationMs;
     dps += log.stats.totalDamageDealt / Math.max(0.1, log.durationMs / 1000);
     hpLeft += log.hero.hpLeft / log.hero.maxHp;
+    enemyHpLeft += log.enemy.hpLeft / log.enemy.maxHp;
   }
   return {
     runs,
@@ -70,6 +74,7 @@ export function evaluateBuild(
     avgDurationMs: Math.round(duration / runs),
     avgDps: Math.round((dps / runs) * 10) / 10,
     avgHpLeftPct: Math.round((hpLeft / runs) * 1000) / 1000,
+    avgEnemyHpLeftPct: Math.round((enemyHpLeft / runs) * 1000) / 1000,
   };
 }
 
@@ -80,9 +85,14 @@ export interface BuildComparison {
   winRateDelta: number;
   dpsDeltaPct: number;
   durationDeltaPct: number;
+  /** Variation des PV restants de l'ennemi (fraction ; négatif = ennemi plus entamé). */
+  enemyHpDelta: number;
   /** Le build proposé est-il utilisable par le héros ? */
   valid: boolean;
-  /** Amélioration mesurée (plus de victoires, ou autant de victoires et plus rapide). */
+  /**
+   * Amélioration mesurée : plus de victoires ; à victoires égales, plus de DPS ; et si tout
+   * est perdu des deux côtés, un ennemi plus entamé (mourir plus vite n'est pas un progrès).
+   */
   improved: boolean;
 }
 
@@ -100,13 +110,20 @@ export function compareBuilds(
   const pct = (a: number, b: number) => (b === 0 ? 0 : Math.round(((a - b) / b) * 1000) / 1000);
   const dpsDeltaPct = pct(after.avgDps, before.avgDps);
   const durationDeltaPct = pct(after.avgDurationMs, before.avgDurationMs);
+  const enemyHpDelta =
+    Math.round((after.avgEnemyHpLeftPct - before.avgEnemyHpLeftPct) * 1000) / 1000;
+  // Toutes les tentatives perdues des deux côtés : le progrès, c'est d'entamer davantage
+  // l'ennemi (et non de taper plus vite en mourant plus tôt). Sinon : plus de DPS.
+  const sameOutcomeBetter = () =>
+    before.winRate === 0 && after.winRate === 0 ? enemyHpDelta < -0.02 : dpsDeltaPct > 0.02;
   return {
     before,
     after,
     winRateDelta,
     dpsDeltaPct,
     durationDeltaPct,
+    enemyHpDelta,
     valid,
-    improved: valid && (winRateDelta > 0 || (winRateDelta === 0 && dpsDeltaPct > 0.02)),
+    improved: valid && (winRateDelta > 0 || (winRateDelta === 0 && sameOutcomeBetter())),
   };
 }
