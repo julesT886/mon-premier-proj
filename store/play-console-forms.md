@@ -62,4 +62,4 @@ Déclarer alors :
 | Nom du package | `com.brumeterre.app` (définitif après la première publication)       |
 | Version        | `1.0.0` (versionCode `1`, à incrémenter à chaque envoi)              |
 | Catégorie      | Jeu → Jeu de rôle                                                    |
-| Coordonnées    | E-mail de contact du développeur (obligatoire, visible sur la fiche) |
+| Coordonnées    | `brumeterre.dev@gmail.com` (e-mail de contact, visible sur la fiche) |
