@@ -103,7 +103,7 @@ function eventLine(e: OfflineEvent, tone: RecapTone, c: Ctx): string | null {
       const boss = ENEMIES_BY_ID[e.enemyId]?.name.fr ?? e.enemyId;
       if (epic) return `Dans un fracas terrible, ${boss} a enfin plié le genou devant ${c.hero}.`;
       if (funny) return `${boss} a perdu. ${boss} n'a pas apprécié. ${c.hero}, si.`;
-      return `${boss} a été vaincu, et un calme nouveau s'est posé sur la région.`;
+      return `Le combat contre ${boss} s'est achevé par une victoire, et un calme nouveau s'est posé sur la région.`;
     }
     case 'boss_failed': {
       const boss = ENEMIES_BY_ID[e.enemyId]?.name.fr ?? e.enemyId;

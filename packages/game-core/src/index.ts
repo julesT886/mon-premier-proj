@@ -20,3 +20,4 @@ export * from './evaluate';
 export * from './summary';
 export * from './coach';
 export * from './narrative';
+export * from './wire';
