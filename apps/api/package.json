@@ -1,0 +1,23 @@
+{
+  "name": "@brumeterre/api",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "tsx watch src/index.ts",
+    "start": "node dist/index.js",
+    "build": "tsup",
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^1.10.0",
+    "@brumeterre/game-core": "workspace:*",
+    "fastify": "^5.12.8",
+    "zod": "^4.6.7"
+  },
+  "devDependencies": {
+    "tsup": "^9.0.0",
+    "tsx": "^4.23.15"
+  }
+}

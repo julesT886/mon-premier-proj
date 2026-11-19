@@ -1,0 +1,11 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`Rng > produces a frozen sequence (cross-engine regression guard) 1`] = `
+[
+  3851726309,
+  1909198784,
+  895741400,
+  387533878,
+  1539891079,
+]
+`;

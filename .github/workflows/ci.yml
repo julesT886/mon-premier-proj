@@ -1,0 +1,59 @@
+name: CI
+
+on:
+  push:
+    branches: [main, 'claude/**']
+  pull_request:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  check:
+    name: Format, lint, typecheck, tests, secrets
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm check
+
+  web-build:
+    name: Mobile web export (smoke)
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    needs: check
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - name: Export web bundle
+        working-directory: apps/mobile
+        run: npx expo export --platform web --output-dir dist
+      - name: No secret in the shipped bundle
+        run: node scripts/check-no-secrets.mjs apps/mobile/dist
+
+  api-build:
+    name: API bundle
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    needs: check
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm --filter @brumeterre/api build

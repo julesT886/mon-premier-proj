@@ -1,0 +1,29 @@
+# Déploiement Fly.io (depuis la racine du repo) :
+#   fly launch --no-deploy --config apps/api/fly.toml
+#   fly secrets set ANTHROPIC_API_KEY=... DEVICE_TOKEN_SECRET=... --config apps/api/fly.toml
+#   fly deploy --config apps/api/fly.toml --dockerfile apps/api/Dockerfile
+app = "brumeterre-api"
+primary_region = "cdg"
+
+[env]
+  PORT = "8787"
+  COACH_MODEL = "claude-sonnet-5-5"
+  RECAP_MODEL = "claude-haiku-5-5"
+
+[http_service]
+  internal_port = 8787
+  force_https = true
+  auto_stop_machines = "stop"
+  auto_start_machines = true
+  min_machines_running = 0
+
+  [[http_service.checks]]
+    path = "/health"
+    interval = "30s"
+    timeout = "5s"
+
+# Le rate limit et le cache sont en mémoire : garder 1 machine au MVP,
+# ou brancher Redis via les interfaces QuotaStore / ResponseCache.
+[[vm]]
+  size = "shared-cpu-1x"
+  memory = "256mb"
