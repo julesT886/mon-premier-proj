@@ -93,7 +93,9 @@ export default function CoachScreen() {
           ) : null}
 
           <Label dim>{t('coach.suggestions')}</Label>
-          {outcome.advice.suggestions.length === 0 ? <Label>{t('coach.none')}</Label> : null}
+          {outcome.advice.suggestions.length === 0 ? (
+            <Label>{t(log.outcome === 'loss' ? 'coach.noneLoss' : 'coach.none')}</Label>
+          ) : null}
           {outcome.advice.suggestions.map((s, i) => (
             <SuggestionCard key={`${s.changeSlot}-${s.to}-${i}`} suggestion={s} log={log} />
           ))}
@@ -128,6 +130,7 @@ function SuggestionCard({ suggestion, log }: { suggestion: CoachSuggestion; log:
   };
 
   const c = verified?.comparison;
+  const allLost = c ? c.before.winRate === 0 && c.after.winRate === 0 : false;
   return (
     <Card>
       <Text style={styles.swap}>
@@ -153,12 +156,22 @@ function SuggestionCard({ suggestion, log }: { suggestion: CoachSuggestion; log:
         <Animated.View entering={FadeInDown} style={{ gap: space.sm }}>
           <Label dim>{t('coach.measured')}</Label>
           <Row style={{ justifyContent: 'space-between' }}>
-            <Metric
-              label={t('coach.winRate')}
-              before={`${Math.round(c.before.winRate * 100)} %`}
-              after={`${Math.round(c.after.winRate * 100)} %`}
-              good={c.winRateDelta >= 0}
-            />
+            {allLost ? (
+              // Tout est perdu des deux côtés : le progrès se lit sur les PV restants du boss.
+              <Metric
+                label={t('coach.enemyHp')}
+                before={`${Math.round(c.before.avgEnemyHpLeftPct * 100)} %`}
+                after={`${Math.round(c.after.avgEnemyHpLeftPct * 100)} %`}
+                good={c.enemyHpDelta <= 0}
+              />
+            ) : (
+              <Metric
+                label={t('coach.winRate')}
+                before={`${Math.round(c.before.winRate * 100)} %`}
+                after={`${Math.round(c.after.winRate * 100)} %`}
+                good={c.winRateDelta >= 0}
+              />
+            )}
             <Metric
               label={t('coach.dps')}
               before={`${Math.round(c.before.avgDps)}`}
@@ -169,7 +182,8 @@ function SuggestionCard({ suggestion, log }: { suggestion: CoachSuggestion; log:
               label={t('coach.duration')}
               before={`${(c.before.avgDurationMs / 1000).toFixed(1)} s`}
               after={`${(c.after.avgDurationMs / 1000).toFixed(1)} s`}
-              good={c.durationDeltaPct <= 0}
+              // En défaite, survivre plus longtemps est un progrès ; en victoire, finir plus vite.
+              good={allLost ? c.durationDeltaPct >= 0 : c.durationDeltaPct <= 0}
             />
           </Row>
           {!c.valid ? <Label style={{ color: colors.bad }}>{t('coach.invalid')}</Label> : null}

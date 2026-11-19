@@ -16,7 +16,8 @@ export type CoachProblemType =
   | 'unused_skill'
   | 'resisted_school'
   | 'missing_synergy'
-  | 'low_survivability';
+  | 'low_survivability'
+  | 'underleveled';
 
 export interface CoachProblem {
   type: CoachProblemType;
@@ -82,6 +83,8 @@ interface CoachTexts {
   resisted: (enemy: string, pct: number, school: string, skills: string) => string;
   synergy: (name: string) => string;
   noDefense: string;
+  underleveled: (enemy: string, enemyLevel: number, heroLevel: number) => string;
+  enemyHpLeft: (before: number, after: number) => string;
   school: Record<string, string>;
   winRatePts: (n: string) => string;
   dpsPct: (n: string) => string;
@@ -100,6 +103,9 @@ const COACH_TEXTS: Record<Locale, CoachTexts> = {
       `${enemy} résiste à ${pct} % aux dégâts ${school} (${skills}).`,
     synergy: (name) => `Il manque 1 compétence pour activer ${name}.`,
     noDefense: 'Aucun soin ni bouclier dans le build.',
+    underleveled: (enemy, el, hl) =>
+      `${enemy} est niveau ${el}, tu es niveau ${hl} : aucun build ne suffit encore. Continue à progresser dans la région, puis réessaie.`,
+    enemyHpLeft: (b, a) => `ennemi à ${a} % de PV (au lieu de ${b} %)`,
     school: { physical: 'physiques', fire: 'de feu', ice: 'de glace', arcane: 'arcaniques' },
     winRatePts: (n) => `${n} pts de victoires`,
     dpsPct: (n) => `${n} % de DPS`,
@@ -117,6 +123,9 @@ const COACH_TEXTS: Record<Locale, CoachTexts> = {
       `${enemy} resists ${school} damage by ${pct}% (${skills}).`,
     synergy: (name) => `One more skill would activate ${name}.`,
     noDefense: 'No heal or shield in the build.',
+    underleveled: (enemy, el, hl) =>
+      `${enemy} is level ${el} and you are level ${hl}: no build is enough yet. Keep progressing in the region, then try again.`,
+    enemyHpLeft: (b, a) => `enemy at ${a}% HP (instead of ${b}%)`,
     school: { physical: 'physical', fire: 'fire', ice: 'ice', arcane: 'arcane' },
     winRatePts: (n) => `${n} win-rate pts`,
     dpsPct: (n) => `${n}% DPS`,
@@ -127,11 +136,24 @@ const COACH_TEXTS: Record<Locale, CoachTexts> = {
   },
 };
 
+/** Écart de niveau à partir duquel une défaite s'explique d'abord par le niveau. */
+export const UNDERLEVEL_GAP = 5;
+
+export function isUnderleveled(summary: CombatSummary): boolean {
+  return summary.outcome === 'loss' && summary.enemy.level - summary.hero.level >= UNDERLEVEL_GAP;
+}
+
 /** Diagnostic local, dans la langue du résumé (`summarizeCombatLog(log, locale)`). */
 export function diagnose(summary: CombatSummary, locale: Locale = 'fr'): CoachProblem[] {
   const T = COACH_TEXTS[locale];
   const problems: CoachProblem[] = [];
   const top = summary.deathCauses[0];
+  if (isUnderleveled(summary)) {
+    problems.push({
+      type: 'underleveled',
+      detail: T.underleveled(summary.enemy.name, summary.enemy.level, summary.hero.level),
+    });
+  }
   if (summary.endReason === 'timeout') {
     problems.push({
       type: 'low_damage',
@@ -197,7 +219,8 @@ export function findBestSwaps(
     for (const skill of pool) {
       const build = setSlot(state.build, slot, skill.id);
       const cmp = compareBuilds(state, state.build, build, target, screenRuns);
-      const score = cmp.winRateDelta * 10 + cmp.dpsDeltaPct;
+      // Même logique que `improved` : victoires d'abord, puis ennemi plus entamé, puis DPS.
+      const score = cmp.winRateDelta * 10 - cmp.enemyHpDelta * 2 + cmp.dpsDeltaPct * 0.5;
       if (score > 0) screened.push({ slot, to: skill.id, score });
     }
   }
@@ -232,6 +255,14 @@ export function formatImpact(c: BuildComparison, locale: Locale = 'fr'): string 
   const dps = Math.round(c.dpsDeltaPct * 100);
   const parts: string[] = [];
   if (wr !== 0) parts.push(T.winRatePts(signed(wr)));
+  if (c.before.winRate === 0 && c.after.winRate === 0 && c.enemyHpDelta !== 0) {
+    parts.push(
+      T.enemyHpLeft(
+        Math.round(c.before.avgEnemyHpLeftPct * 100),
+        Math.round(c.after.avgEnemyHpLeftPct * 100),
+      ),
+    );
+  }
   if (dps !== 0) parts.push(T.dpsPct(signed(dps)));
   return parts.length ? parts.join(', ') : T.negligible;
 }
@@ -255,7 +286,8 @@ export function localCoach(
     advice: {
       verdict: summary.outcome,
       explanation,
-      problems: problems.slice(0, 4),
+      // En défaite, le premier problème est déjà dans l'explication : pas de doublon.
+      problems: (summary.outcome === 'loss' && main ? problems.slice(1) : problems).slice(0, 4),
       suggestions: verified.map((v) => v.suggestion),
     },
     verified,

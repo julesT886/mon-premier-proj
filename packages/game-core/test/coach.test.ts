@@ -105,6 +105,48 @@ describe('summarizeCombatLog', () => {
   });
 });
 
+describe('underleveled losses (warrior level 5 vs Vorhast level 18)', () => {
+  function lowWarrior(): GameState {
+    const s = createNewGame({ heroName: 'Jule', classId: 'warrior', playerSeed: 'jule' });
+    s.hero.level = 5;
+    s.activeRegion = 'volcano';
+    s.regions.volcano.unlocked = true;
+    s.build = { slots: ['w_iron_skin', 'w_rend', 'w_war_cry', 'w_whirlwind'] };
+    return s;
+  }
+  const target = { kind: 'boss' as const, region: 'volcano' as const };
+
+  it('blames the level gap first, in the explanation too', () => {
+    const s = lowWarrior();
+    const log = simulateCombat(heroSnapshot(s), makeEnemy('vorhast', 18), 'jule', {
+      recordEvents: false,
+    });
+    const summary = summarizeCombatLog(log);
+    expect(diagnose(summary)[0]?.type).toBe('underleveled');
+    const { advice } = localCoach(s, summary, target);
+    expect(advice.explanation).toContain('niveau 18');
+    expect(advice.explanation).toContain('niveau 5');
+    expect(advice.problems.some((p) => p.type === 'underleveled')).toBe(false);
+    const en = localCoach(s, summarizeCombatLog(log, 'en'), target, 'en');
+    expect(en.advice.explanation).toContain('level 18');
+  });
+
+  it('when every fight is lost, progress means a more damaged boss, not a faster death', () => {
+    const s = lowWarrior();
+    const weaker = { slots: ['w_iron_skin', null, 'w_war_cry', 'w_whirlwind'] };
+    const worse = compareBuilds(s, s.build, weaker, target);
+    expect(worse.before.winRate).toBe(0);
+    expect(worse.after.winRate).toBe(0);
+    expect(worse.enemyHpDelta).toBeGreaterThan(0);
+    expect(worse.improved).toBe(false);
+
+    const better = compareBuilds(s, weaker, s.build, target);
+    expect(better.enemyHpDelta).toBeLessThan(-0.02);
+    expect(better.improved).toBe(true);
+    expect(formatImpact(better)).toMatch(/ennemi à \d+ % de PV \(au lieu de \d+ %\)/);
+  });
+});
+
 describe('coach helpers', () => {
   it('verifySuggestions drops out-of-range slots and unknown skills', () => {
     const s = iceMageOnCoast();
@@ -160,6 +202,8 @@ describe('coach helpers', () => {
       6,
     );
     expect(formatImpact(cmp)).toMatch(/DPS|victoires/);
-    expect(formatImpact({ ...cmp, winRateDelta: 0, dpsDeltaPct: 0 })).toBe('impact négligeable');
+    expect(formatImpact({ ...cmp, winRateDelta: 0, dpsDeltaPct: 0, enemyHpDelta: 0 })).toBe(
+      'impact négligeable',
+    );
   });
 });

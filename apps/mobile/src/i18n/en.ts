@@ -116,6 +116,8 @@ export const en: Record<MessageKey, string> = {
   'coach.problems': 'What goes wrong',
   'coach.suggestions': 'Suggestions',
   'coach.none': 'No change recommended: your build holds up here.',
+  'coach.noneLoss': 'No build change wins this fight for now.',
+  'coach.enemyHp': 'Enemy HP',
   'coach.test': 'Test suggestion',
   'coach.testing': 'Simulating 20 fights…',
   'coach.apply': 'Apply',

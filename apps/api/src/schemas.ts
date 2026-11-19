@@ -113,6 +113,7 @@ export const CoachOutputSchema = z.object({
           'resisted_school',
           'missing_synergy',
           'low_survivability',
+          'underleveled',
         ]),
         detail: z.string().min(1).max(240),
       }),

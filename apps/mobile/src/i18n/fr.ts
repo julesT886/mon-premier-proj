@@ -114,6 +114,8 @@ export const fr = {
   'coach.problems': 'Ce qui coince',
   'coach.suggestions': 'Suggestions',
   'coach.none': 'Aucun changement recommandé : ton build tient la route ici.',
+  'coach.noneLoss': 'Aucun changement de build ne fait gagner ce combat pour l’instant.',
+  'coach.enemyHp': 'PV ennemi',
   'coach.test': 'Tester la suggestion',
   'coach.testing': 'Simulation de 20 combats…',
   'coach.apply': 'Appliquer',
