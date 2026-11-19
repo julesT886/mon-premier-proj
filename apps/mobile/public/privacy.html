@@ -1,0 +1,282 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Brumeterre — Politique de confidentialité</title>
+    <style>
+      :root {
+        --bg: #14161f;
+        --surface: #1e2130;
+        --text: #ece8dd;
+        --dim: #a39f95;
+        --accent: #e8b65a;
+      }
+      body {
+        margin: 0;
+        background: var(--bg);
+        color: var(--text);
+        font:
+          16px/1.6 system-ui,
+          -apple-system,
+          'Segoe UI',
+          Roboto,
+          sans-serif;
+      }
+      main {
+        max-width: 760px;
+        margin: 0 auto;
+        padding: 32px 16px 64px;
+      }
+      h1,
+      h2 {
+        color: var(--accent);
+        line-height: 1.25;
+      }
+      h3 {
+        margin-bottom: 4px;
+      }
+      section {
+        background: var(--surface);
+        border-radius: 12px;
+        padding: 8px 20px 16px;
+        margin: 16px 0;
+      }
+      a {
+        color: var(--accent);
+      }
+      .dim {
+        color: var(--dim);
+      }
+      hr {
+        border: 0;
+        border-top: 1px solid #343a52;
+        margin: 48px 0;
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <h1>Politique de confidentialité — Brumeterre</h1>
+      <p class="dim">
+        Dernière mise à jour : 19 novembre 2026 · <a href="#en">English version below</a>
+      </p>
+
+      <p>
+        Brumeterre est un jeu de rôle « idle » édité par un développeur indépendant. Cette page
+        explique quelles données le jeu utilise, pourquoi, et comment les supprimer.
+      </p>
+
+      <section>
+        <h2>En résumé</h2>
+        <ul>
+          <li>
+            Aucun compte n'est nécessaire. Aucune publicité, aucun outil d'analyse ni traceur tiers.
+          </li>
+          <li>
+            Ta partie (héros, build, progression, journal) est enregistrée
+            <strong>uniquement sur ton appareil</strong>.
+          </li>
+          <li>
+            Les fonctions d'IA (coach de build et récit de ton absence) sont
+            <strong>facultatives</strong> : le jeu fonctionne entièrement sans elles, avec des
+            versions locales.
+          </li>
+        </ul>
+      </section>
+
+      <section>
+        <h2>Données enregistrées sur ton appareil</h2>
+        <p>
+          Le nom de ton héros, sa classe, son build, ses ressources, sa progression, tes réglages
+          (langue, ton du récit, notifications) et le journal des combats et récits sont stockés
+          localement (base SQLite sur mobile, stockage du navigateur sur la version web). Ils ne
+          quittent pas l'appareil, sauf dans le cas décrit ci-dessous.
+        </p>
+      </section>
+
+      <section>
+        <h2>Fonctions d'IA (lorsqu'elles sont activées)</h2>
+        <p>
+          Lorsque le service d'IA est activé, le jeu envoie à notre serveur, puis au fournisseur de
+          modèle d'IA <strong>Anthropic</strong> (API Claude), uniquement ce qui est nécessaire pour
+          générer le texte :
+        </p>
+        <ul>
+          <li>
+            un <strong>identifiant aléatoire d'appareil</strong>, créé par le jeu, sans lien avec
+            ton identité ;
+          </li>
+          <li>
+            des <strong>données de jeu</strong> : classe et niveau du héros, compétences,
+            statistiques d'un combat, événements survenus pendant ton absence ;
+          </li>
+          <li>
+            le <strong>nom que tu as donné à ton héros</strong> (pour le récit), ainsi que la langue
+            et le ton choisis.
+          </li>
+        </ul>
+        <p>
+          Ces données servent uniquement à produire l'analyse du coach ou le récit. Notre serveur
+          conserve une copie des réponses en mémoire au plus 24 heures (pour éviter de refaire un
+          même calcul) et un compteur d'utilisation quotidien par identifiant d'appareil ; il
+          n'enregistre pas le contenu des échanges dans ses journaux. Anthropic traite les données
+          selon ses conditions commerciales d'utilisation de l'API. Aucune donnée n'est vendue ni
+          utilisée à des fins publicitaires.
+        </p>
+      </section>
+
+      <section>
+        <h2>Notifications</h2>
+        <p>
+          Si tu les actives, les notifications sont <strong>programmées localement</strong> sur ton
+          appareil (par exemple : « le plafond de 12 h est atteint »). Aucun jeton de notification
+          n'est envoyé à un serveur.
+        </p>
+      </section>
+
+      <section>
+        <h2>Achats</h2>
+        <p>
+          La version actuelle ne propose aucun achat intégré et ne collecte aucune donnée de
+          paiement.
+        </p>
+      </section>
+
+      <section>
+        <h2>Enfants</h2>
+        <p>
+          Brumeterre s'adresse à un public adulte et n'est pas destiné aux enfants de moins de 13
+          ans.
+        </p>
+      </section>
+
+      <section>
+        <h2>Supprimer tes données</h2>
+        <p>
+          Dans le jeu : <strong>Réglages → Recommencer une partie</strong> efface la sauvegarde et
+          le journal. Désinstaller l'application (ou effacer les données du site dans ton
+          navigateur) supprime tout ce qui est stocké sur l'appareil. Les données éventuellement
+          mises en cache par notre serveur sont effacées automatiquement en 24 heures au plus.
+        </p>
+      </section>
+
+      <section>
+        <h2>Contact</h2>
+        <p>
+          Pour toute question sur cette politique :
+          <a href="https://github.com/julesT886/mon-premier-proj/issues"
+            >ouvrir une demande sur la page du projet</a
+          >.
+        </p>
+      </section>
+
+      <p class="dim">
+        Cette politique peut évoluer ; la date de mise à jour figure en haut de la page.
+      </p>
+
+      <hr />
+
+      <h1 id="en">Privacy Policy — Brumeterre</h1>
+      <p class="dim">Last updated: November 19, 2026</p>
+
+      <p>
+        Brumeterre is an idle role-playing game made by an independent developer. This page explains
+        which data the game uses, why, and how to delete it.
+      </p>
+
+      <section>
+        <h2>Summary</h2>
+        <ul>
+          <li>No account required. No ads, no analytics, no third-party trackers.</li>
+          <li>
+            Your game (hero, build, progress, journal) is stored
+            <strong>only on your device</strong>.
+          </li>
+          <li>
+            AI features (build coach and the story of your absence) are <strong>optional</strong>:
+            the game works fully without them, using local versions.
+          </li>
+        </ul>
+      </section>
+
+      <section>
+        <h2>Data stored on your device</h2>
+        <p>
+          Your hero's name, class, build, resources and progress, your settings (language, story
+          tone, notifications) and the journal of fights and stories are stored locally (SQLite on
+          mobile, browser storage on the web version). They do not leave the device, except as
+          described below.
+        </p>
+      </section>
+
+      <section>
+        <h2>AI features (when enabled)</h2>
+        <p>
+          When the AI service is enabled, the game sends to our server, and then to the AI model
+          provider
+          <strong>Anthropic</strong> (Claude API), only what is needed to generate the text:
+        </p>
+        <ul>
+          <li>
+            a <strong>random device identifier</strong> created by the game, not linked to your
+            identity;
+          </li>
+          <li>
+            <strong>game data</strong>: hero class and level, skills, statistics of a fight, events
+            that happened while you were away;
+          </li>
+          <li>
+            the <strong>name you gave your hero</strong> (for the story), plus the chosen language
+            and tone.
+          </li>
+        </ul>
+        <p>
+          This data is used only to produce the coach's analysis or the story. Our server keeps a
+          copy of responses in memory for at most 24 hours (to avoid recomputing the same request)
+          and a daily usage counter per device identifier; it does not record the content of
+          exchanges in its logs. Anthropic processes data under its commercial API terms. No data is
+          sold or used for advertising.
+        </p>
+      </section>
+
+      <section>
+        <h2>Notifications</h2>
+        <p>
+          If you enable them, notifications are <strong>scheduled locally</strong> on your device
+          (for example: "the 12 h cap is reached"). No notification token is sent to any server.
+        </p>
+      </section>
+
+      <section>
+        <h2>Purchases</h2>
+        <p>The current version offers no in-app purchases and collects no payment data.</p>
+      </section>
+
+      <section>
+        <h2>Children</h2>
+        <p>Brumeterre is intended for adults and is not directed at children under 13.</p>
+      </section>
+
+      <section>
+        <h2>Deleting your data</h2>
+        <p>
+          In the game: <strong>Settings → Start a new game</strong> erases the save and the journal.
+          Uninstalling the app (or clearing the site's data in your browser) removes everything
+          stored on the device. Data possibly cached by our server is deleted automatically within
+          24 hours.
+        </p>
+      </section>
+
+      <section>
+        <h2>Contact</h2>
+        <p>
+          For any question about this policy:
+          <a href="https://github.com/julesT886/mon-premier-proj/issues"
+            >open a request on the project page</a
+          >.
+        </p>
+      </section>
+    </main>
+  </body>
+</html>
