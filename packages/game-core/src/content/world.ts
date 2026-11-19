@@ -20,6 +20,7 @@ export const REGIONS: readonly RegionDef[] = [
     name: { fr: 'Bois-Murmure', en: 'Whisperwood' },
     mood: {
       fr: 'Une forêt d’arbres-lanternes où la mousse chuchote le nom des voyageurs.',
+      en: 'A forest of lantern-trees where the moss whispers travellers’ names.',
     },
     order: 1,
     minLevel: 1,
@@ -38,6 +39,7 @@ export const REGIONS: readonly RegionDef[] = [
     name: { fr: 'Cœur-de-Braise', en: 'Emberheart' },
     mood: {
       fr: 'Un volcan endormi dont les coulées dessinent d’anciennes runes sur la roche noire.',
+      en: 'A sleeping volcano whose lava flows trace ancient runes on the black rock.',
     },
     order: 2,
     minLevel: 9,
@@ -56,6 +58,7 @@ export const REGIONS: readonly RegionDef[] = [
     name: { fr: 'Côte des Sel-Lunes', en: 'Saltmoon Coast' },
     mood: {
       fr: 'Des falaises d’écume où deux lunes tirent la marée dans des directions opposées.',
+      en: 'Foam cliffs where two moons pull the tide in opposite directions.',
     },
     order: 3,
     minLevel: 19,
@@ -404,37 +407,40 @@ export const RELICS: readonly RelicDef[] = [
   {
     id: 'lantern_seed',
     name: { fr: 'Graine-lanterne', en: 'Lantern Seed' },
-    description: { fr: '+40 PV max.' },
+    description: { fr: '+40 PV max.', en: '+40 max HP.' },
     bonus: { maxHp: 40 },
   },
   {
     id: 'mossheart_charm',
     name: { fr: 'Charme cœur-de-mousse', en: 'Mossheart Charm' },
-    description: { fr: '+4 attaque, +4 puissance des sorts.' },
+    description: { fr: '+4 attaque, +4 puissance des sorts.', en: '+4 attack, +4 spell power.' },
     bonus: { attack: 4, spellPower: 4 },
   },
   {
     id: 'cinder_crown',
     name: { fr: 'Couronne de cendre', en: 'Cinder Crown' },
-    description: { fr: '+5 % de chance de critique.' },
+    description: { fr: '+5 % de chance de critique.', en: '+5% crit chance.' },
     bonus: { critChance: 0.05 },
   },
   {
     id: 'obsidian_scale',
     name: { fr: 'Écaille d’obsidienne', en: 'Obsidian Scale' },
-    description: { fr: '+20 armure, +10 résistance.' },
+    description: { fr: '+20 armure, +10 résistance.', en: '+20 armor, +10 resistance.' },
     bonus: { armor: 20, resist: 10 },
   },
   {
     id: 'tide_pearl',
     name: { fr: 'Perle des marées', en: 'Tide Pearl' },
-    description: { fr: '+120 PV max.' },
+    description: { fr: '+120 PV max.', en: '+120 max HP.' },
     bonus: { maxHp: 120 },
   },
   {
     id: 'twin_moon_sigil',
     name: { fr: 'Sceau des lunes jumelles', en: 'Twin-Moon Sigil' },
-    description: { fr: '+10 attaque, +10 puissance des sorts.' },
+    description: {
+      fr: '+10 attaque, +10 puissance des sorts.',
+      en: '+10 attack, +10 spell power.',
+    },
     bonus: { attack: 10, spellPower: 10 },
   },
 ];
@@ -447,19 +453,28 @@ export const COMPANIONS: readonly CompanionDef[] = [
   {
     id: 'pip',
     name: { fr: 'Pip', en: 'Pip' },
-    description: { fr: 'Un feu follet bavard qui prétend connaître tous les sentiers.' },
+    description: {
+      fr: 'Un feu follet bavard qui prétend connaître tous les sentiers.',
+      en: 'A chatty will-o’-the-wisp who claims to know every path.',
+    },
     region: 'forest',
   },
   {
     id: 'brannoc',
     name: { fr: 'Brannoc', en: 'Brannoc' },
-    description: { fr: 'Un forgeron nain bourru, exilé du volcan, qui note tout dans un carnet.' },
+    description: {
+      fr: 'Un forgeron nain bourru, exilé du volcan, qui note tout dans un carnet.',
+      en: 'A gruff dwarf smith, exiled from the volcano, who writes everything down in a notebook.',
+    },
     region: 'volcano',
   },
   {
     id: 'maelis',
     name: { fr: 'Maëlis', en: 'Maelis' },
-    description: { fr: 'Une cartographe des marées qui parle aux deux lunes.' },
+    description: {
+      fr: 'Une cartographe des marées qui parle aux deux lunes.',
+      en: 'A tide cartographer who talks to both moons.',
+    },
     region: 'coast',
   },
 ];

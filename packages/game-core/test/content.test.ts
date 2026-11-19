@@ -3,10 +3,12 @@ import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import {
   CLASSES,
+  COMPANIONS,
   COMPANIONS_BY_ID,
   ENEMIES,
   ENEMIES_BY_ID,
   REGIONS,
+  RELICS,
   RELICS_BY_ID,
   SKILLS,
   SKILLS_BY_ID,
@@ -70,6 +72,20 @@ describe('content integrity', () => {
     for (let i = 1; i < XP_TO_NEXT.length; i++) {
       expect(XP_TO_NEXT[i]!).toBeGreaterThan(XP_TO_NEXT[i - 1]!);
     }
+  });
+
+  it('every player-facing text has an English translation', () => {
+    const texts = [
+      ...SKILLS.flatMap((s) => [s.name, s.description]),
+      ...SYNERGIES.flatMap((s) => [s.name, s.description]),
+      ...REGIONS.flatMap((r) => [r.name, r.mood]),
+      ...RELICS.flatMap((r) => [r.name, r.description]),
+      ...COMPANIONS.flatMap((c) => [c.name, c.description]),
+      ...ENEMIES.map((e) => e.name),
+      ...Object.values(CLASSES).map((c) => c.name),
+    ];
+    const missing = texts.filter((t) => !t.en).map((t) => t.fr);
+    expect(missing).toEqual([]);
   });
 
   it('getters throw on unknown ids', () => {
